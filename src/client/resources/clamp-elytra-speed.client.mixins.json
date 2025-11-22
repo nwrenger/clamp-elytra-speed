@@ -1,0 +1,9 @@
+{
+  "required": true,
+  "package": "io.github.nwrenger.clampelytraspeed.mixin.client",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": ["LivingEntityElytraSpeed"],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

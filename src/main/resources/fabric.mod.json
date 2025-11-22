@@ -1,0 +1,32 @@
+{
+	"schemaVersion": 1,
+	"id": "clamp-elytra-speed",
+	"version": "${version}",
+	"name": "Clamp Elytra Speed",
+	"description": "Clamp/Limit the maximum speed of elytra flight to a configurable value.",
+	"authors": ["nwrenger"],
+	"contact": {
+		"sources": "https://github.com/nwrenger/clamp-elytra-speed",
+		"issues": "https://github.com/nwrenger/clamp-elytra-speed/issues"
+	},
+	"license": "MIT",
+	"icon": "assets/clamp-elytra-speed/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": ["io.github.nwrenger.clampelytraspeed.ClampElytraSpeed"],
+		"client": ["io.github.nwrenger.clampelytraspeed.ClampElytraSpeedClient"]
+	},
+	"mixins": [
+		"clamp-elytra-speed.mixins.json",
+		{
+			"config": "clamp-elytra-speed.client.mixins.json",
+			"environment": "client"
+		}
+	],
+	"depends": {
+		"fabricloader": ">=0.17.3",
+		"minecraft": ">=1.21.9 <=1.21.10",
+		"java": ">=21",
+		"fabric-api": "*"
+	}
+}
