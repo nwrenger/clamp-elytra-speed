@@ -4,12 +4,11 @@
 [![modrinth](https://img.shields.io/badge/dynamic/json?url=https://api.modrinth.com/v2/project/clamp-elytra-speed&label=downloads&query=$.downloads&color=#00AF5C)](https://modrinth.com/mod/clamp-elytra-speed)
 [![modrinth](https://img.shields.io/modrinth/game-versions/clamp-elytra-speed.svg)](https://modrinth.com/mod/clamp-elytra-speed)
 
-
 A lightweight mod that **clamps/limits the maximum speed of elytra flight** to a configurable value.
 
 > Perfect for multiplayer servers that want to nerf elytra rushing, reduce chunk-loading lag, or simply keep travel speeds balanced.
 
-## Usage
+## How It Works
 
 Minecraft calculates elytra movement client-side, so the server cannot directly control flight velocity.
 
