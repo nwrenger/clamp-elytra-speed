@@ -1,8 +1,8 @@
-package io.github.nwrenger.clampelytraspeed.mixin.client;
+package io.github.nwrenger.elytraspeedcap.mixin.client;
 
-import io.github.nwrenger.clampelytraspeed.ClampElytraSpeed;
-import io.github.nwrenger.clampelytraspeed.ClampElytraSpeedClient;
-import io.github.nwrenger.clampelytraspeed.ClampElytraSpeedConfig;
+import io.github.nwrenger.elytraspeedcap.ElytraSpeedCap;
+import io.github.nwrenger.elytraspeedcap.ElytraSpeedCapClient;
+import io.github.nwrenger.elytraspeedcap.ElytraSpeedCapConfig;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -22,7 +22,7 @@ public abstract class LivingEntityElytraSpeed extends Entity {
     }
 
     @Inject(method = "updateFallFlyingMovement", at = @At("RETURN"), cancellable = true)
-    private void clampelytraspeed$clampFallFlyingVelocity(Vec3 input,
+    private void elytraspeedcap$capFallFlyingVelocity(Vec3 input,
             CallbackInfoReturnable<Vec3> cir) {
         Vec3 result = cir.getReturnValue();
 
@@ -32,7 +32,7 @@ public abstract class LivingEntityElytraSpeed extends Entity {
             return;
         }
 
-        double maxSpeedPerTick = ClampElytraSpeedConfig.intoMaxSpeedPerTick(ClampElytraSpeedClient.maxSpeed);
+        double maxSpeedPerTick = ElytraSpeedCapConfig.intoMaxSpeedPerTick(ElytraSpeedCapClient.maxSpeed);
         if (maxSpeedPerTick <= 0.0D) {
             return;
         }
@@ -43,21 +43,21 @@ public abstract class LivingEntityElytraSpeed extends Entity {
         }
 
         double factor = maxSpeedPerTick / horizontal;
-        Vec3 clamped = new Vec3(
+        Vec3 capped = new Vec3(
                 result.x * factor,
                 result.y,
                 result.z * factor);
 
-        ClampElytraSpeed.LOGGER.debug(
-                "[Clamp Elytra Speed] Clamping HORIZONTAL Elytra velocity for {} from {} to {} (factor={}) oldVel={} newVel={}",
+        ElytraSpeedCap.LOGGER.debug(
+                "[Elytra Speed Cap] Capping HORIZONTAL Elytra velocity for {} from {} to {} (factor={}) oldVel={} newVel={}",
                 self.getName().getString(),
                 horizontal,
                 maxSpeedPerTick,
                 factor,
                 result,
-                clamped);
+                capped);
 
-        // Send clamped vector back
-        cir.setReturnValue(clamped);
+        // Send capped vector back
+        cir.setReturnValue(capped);
     }
 }

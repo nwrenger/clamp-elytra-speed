@@ -1,4 +1,4 @@
-package io.github.nwrenger.clampelytraspeed;
+package io.github.nwrenger.elytraspeedcap;
 
 import com.google.gson.GsonBuilder;
 import net.fabricmc.loader.api.FabricLoader;
@@ -9,11 +9,11 @@ import java.io.Reader;
 import java.io.Writer;
 import java.nio.file.Files;
 
-public class ClampElytraSpeedConfig {
+public class ElytraSpeedCapConfig {
     public static final double TICKS_PER_SECOND = 20.0;
 
     private static final File CONFIG_FILE = new File(FabricLoader.getInstance().getConfigDir().toFile(),
-            "clamp-elytra-speed.json");
+            "elytra-speed-cap.json");
 
     public double max_speed = 60.0;
 
@@ -21,22 +21,22 @@ public class ClampElytraSpeedConfig {
         try (Writer writer = Files.newBufferedWriter(CONFIG_FILE.toPath())) {
             new GsonBuilder().setPrettyPrinting().create().toJson(this, writer);
         } catch (IOException e) {
-            ClampElytraSpeed.LOGGER.error("[Clamp Elytra Speed] IO error while trying to save config file", e);
+            ElytraSpeedCap.LOGGER.error("[Elytra Speed Cap] IO error while trying to save config file", e);
         }
     }
 
-    public static ClampElytraSpeedConfig load() {
+    public static ElytraSpeedCapConfig load() {
         if (!CONFIG_FILE.exists()) {
-            ClampElytraSpeedConfig newConfig = new ClampElytraSpeedConfig();
+            ElytraSpeedCapConfig newConfig = new ElytraSpeedCapConfig();
             newConfig.save();
             return newConfig;
         }
 
         try (Reader reader = Files.newBufferedReader(CONFIG_FILE.toPath())) {
-            return new GsonBuilder().setPrettyPrinting().create().fromJson(reader, ClampElytraSpeedConfig.class);
+            return new GsonBuilder().setPrettyPrinting().create().fromJson(reader, ElytraSpeedCapConfig.class);
         } catch (IOException e) {
-            ClampElytraSpeed.LOGGER.error("[Clamp Elytra Speed] Unable to read config file, using default config", e);
-            return new ClampElytraSpeedConfig();
+            ElytraSpeedCap.LOGGER.error("[Elytra Speed Cap] Unable to read config file, using default config", e);
+            return new ElytraSpeedCapConfig();
         }
     }
 
