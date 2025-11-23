@@ -10,7 +10,7 @@ A lightweight mod that **limits the maximum speed of elytra flight** to a config
 
 ## How It Works
 
-Minecraft calculates elytra movement primarily on the server, while the client **predicts** movement locally to keep the flight smooth.
+Minecraft **calculates** elytra movement primarily on the server, while the client **predicts** movement locally to keep the flight smooth.
 
 To enforce a maximum speed:
 
