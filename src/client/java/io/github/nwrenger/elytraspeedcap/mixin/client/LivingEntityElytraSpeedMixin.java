@@ -3,11 +3,8 @@ package io.github.nwrenger.elytraspeedcap.mixin.client;
 import io.github.nwrenger.elytraspeedcap.ElytraSpeedCap;
 import io.github.nwrenger.elytraspeedcap.ElytraSpeedCapClient;
 import io.github.nwrenger.elytraspeedcap.ElytraSpeedCapConfig;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -16,10 +13,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(LivingEntity.class)
-public abstract class LivingEntityElytraSpeed extends Entity {
-    protected LivingEntityElytraSpeed(EntityType<?> type, Level level) {
-        super(type, level);
-    }
+public abstract class LivingEntityElytraSpeedMixin {
 
     @Inject(method = "updateFallFlyingMovement", at = @At("RETURN"), cancellable = true)
     private void elytraspeedcap$capFallFlyingVelocity(Vec3 input,
@@ -43,10 +37,7 @@ public abstract class LivingEntityElytraSpeed extends Entity {
         }
 
         double factor = maxSpeedPerTick / horizontal;
-        Vec3 capped = new Vec3(
-                result.x * factor,
-                result.y,
-                result.z * factor);
+        Vec3 capped = result.scale(factor);
 
         ElytraSpeedCap.LOGGER.debug(
                 "[Elytra Speed Cap] Capping HORIZONTAL Elytra velocity for {} from {} to {} (factor={}) oldVel={} newVel={}",

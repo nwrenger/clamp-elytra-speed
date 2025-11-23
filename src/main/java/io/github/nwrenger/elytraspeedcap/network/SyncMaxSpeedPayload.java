@@ -8,6 +8,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 
 public record SyncMaxSpeedPayload(double maxSpeed) implements CustomPacketPayload {
+
     // Vanilla packet ID (example-mod:sync_max_speed)
     public static final ResourceLocation SYNC_MAX_SPEED_PAYLOAD_ID = ResourceLocation.fromNamespaceAndPath(
             ElytraSpeedCap.MOD_ID,
