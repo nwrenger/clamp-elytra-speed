@@ -5,80 +5,50 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.phys.Vec3;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-
 public final class ElytraSpeedHandler {
-    // Last server-side position per player
-    private static final Map<UUID, Vec3> LAST_POS = new HashMap<>();
-
-    // How far over the cap we allow before correcting (1.05 = 5% over)
-    private static final double SOFT_CAP_FACTOR = 1.05;
-
-    // How strongly we pull toward the capped position each tick (0..1)
-    private static final double BLEND_FACTOR = 0.4;
-
     public static void init() {
         ServerTickEvents.END_WORLD_TICK.register(ElytraSpeedHandler::onEndWorldTick);
     }
 
     private static void onEndWorldTick(ServerLevel level) {
-        double maxSpeedPerTick = ElytraSpeedCapConfig.intoMaxSpeedPerTick(ElytraSpeedCap.getConfig().max_speed);
+        double maxSpeedPerTick = ElytraSpeedCapConfig.intoMaxSpeedPerTick(
+                ElytraSpeedCap.getConfig().max_speed
+        );
         if (maxSpeedPerTick <= 0.0D)
             return;
 
-        double softCap = maxSpeedPerTick * SOFT_CAP_FACTOR;
-
         for (ServerPlayer player : level.players()) {
-            UUID id = player.getUUID();
-
-            if (!player.isFallFlying()) {
-                LAST_POS.remove(id);
+            if (!player.isFallFlying())
                 continue;
+
+            Vec3 velocity = player.getDeltaMovement();
+
+            // Horizontal speed from velocity, not from position delta
+            double horizontal = Math.sqrt(velocity.x * velocity.x + velocity.z * velocity.z);
+
+            if (horizontal > maxSpeedPerTick) {
+                double factor = maxSpeedPerTick / horizontal;
+
+                // Velocity we *want* at the cap (don’t touch Y)
+                Vec3 cappedVel = new Vec3(
+                        velocity.x * factor,
+                        velocity.y,
+                        velocity.z * factor
+                );
+
+                player.setDeltaMovement(cappedVel);
+
+                // Tell the client "your motion changed", so it updates cleanly
+                player.hasImpulse = true;
+                player.hurtMarked = true;
+
+                ElytraSpeedCap.LOGGER.debug(
+                        "[Elytra Speed Cap] Soft-capped Elytra velocity for {}: horizontal={} max={}",
+                        player.getGameProfile().name(),
+                        horizontal,
+                        maxSpeedPerTick
+                );
             }
-
-            Vec3 current = player.position();
-            Vec3 previous = LAST_POS.get(id);
-
-            if (previous != null) {
-                Vec3 delta = current.subtract(previous);
-
-                // Horizontal distance moved this tick
-                double horizontal = Math.sqrt(delta.x * delta.x + delta.z * delta.z);
-
-                // Only start correcting once we're *over* the soft cap
-                if (horizontal > softCap) {
-                    // Target: what the displacement *would* be at exactly maxSpeedPerTick
-                    double factorToMax = maxSpeedPerTick / horizontal;
-
-                    Vec3 cappedDelta = new Vec3(
-                            delta.x * factorToMax,
-                            delta.y,
-                            delta.z * factorToMax);
-
-                    Vec3 targetPos = previous.add(cappedDelta);
-
-                    // Blend current position towards target position
-                    // blended = current + (target - current) * BLEND_FACTOR
-                    Vec3 offsetToTarget = targetPos.subtract(current);
-                    Vec3 blended = current.add(offsetToTarget.multiply(BLEND_FACTOR, 0., BLEND_FACTOR));
-
-                    player.teleportTo(blended.x, blended.y, blended.z);
-
-                    ElytraSpeedCap.LOGGER.debug(
-                            "[Elytra Speed Cap] Soft-capped Elytra move for {}: horizontal={} softCap={} max={} blend={}",
-                            player.getGameProfile().name(),
-                            horizontal,
-                            softCap,
-                            maxSpeedPerTick,
-                            BLEND_FACTOR);
-
-                    current = blended;
-                }
-            }
-
-            LAST_POS.put(id, player.position());
         }
     }
 }
