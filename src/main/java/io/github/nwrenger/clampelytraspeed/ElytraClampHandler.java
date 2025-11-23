@@ -53,7 +53,7 @@ public final class ElytraClampHandler {
 
                     Vec3 clampedDelta = new Vec3(
                             delta.x * factorToMax,
-                            delta.y * factorToMax, // or delta.y if you only want horizontal clamping
+                            delta.y,
                             delta.z * factorToMax
                     );
 
@@ -62,7 +62,7 @@ public final class ElytraClampHandler {
                     // Blend current position towards target position
                     // blended = current + (target - current) * BLEND_FACTOR
                     Vec3 offsetToTarget = targetPos.subtract(current);
-                    Vec3 blended = current.add(offsetToTarget.scale(BLEND_FACTOR));
+                    Vec3 blended = current.add(offsetToTarget.multiply(BLEND_FACTOR, 0., BLEND_FACTOR));
 
                     player.teleportTo(blended.x, blended.y, blended.z);
 
