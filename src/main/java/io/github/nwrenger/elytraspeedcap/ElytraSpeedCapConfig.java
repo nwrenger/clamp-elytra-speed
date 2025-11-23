@@ -10,6 +10,7 @@ import java.io.Writer;
 import java.nio.file.Files;
 
 public class ElytraSpeedCapConfig {
+
     public static final double TICKS_PER_SECOND = 20.0;
 
     private static final File CONFIG_FILE = new File(FabricLoader.getInstance().getConfigDir().toFile(),

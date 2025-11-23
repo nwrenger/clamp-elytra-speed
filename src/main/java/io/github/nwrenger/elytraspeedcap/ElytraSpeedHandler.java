@@ -6,14 +6,14 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.phys.Vec3;
 
 public final class ElytraSpeedHandler {
+
     public static void init() {
         ServerTickEvents.END_WORLD_TICK.register(ElytraSpeedHandler::onEndWorldTick);
     }
 
     private static void onEndWorldTick(ServerLevel level) {
         double maxSpeedPerTick = ElytraSpeedCapConfig.intoMaxSpeedPerTick(
-                ElytraSpeedCap.getConfig().max_speed
-        );
+                ElytraSpeedCap.getConfig().max_speed);
         if (maxSpeedPerTick <= 0.0D)
             return;
 
@@ -29,14 +29,9 @@ public final class ElytraSpeedHandler {
             if (horizontal > maxSpeedPerTick) {
                 double factor = maxSpeedPerTick / horizontal;
 
-                // Velocity we *want* at the cap (don’t touch Y)
-                Vec3 cappedVel = new Vec3(
-                        velocity.x * factor,
-                        velocity.y,
-                        velocity.z * factor
-                );
-
-                player.setDeltaMovement(cappedVel);
+                // Apply cap
+                Vec3 capped = velocity.scale(factor);
+                player.setDeltaMovement(capped);
 
                 // Tell the client "your motion changed", so it updates cleanly
                 player.hasImpulse = true;
@@ -46,8 +41,7 @@ public final class ElytraSpeedHandler {
                         "[Elytra Speed Cap] Soft-capped Elytra velocity for {}: horizontal={} max={}",
                         player.getGameProfile().name(),
                         horizontal,
-                        maxSpeedPerTick
-                );
+                        maxSpeedPerTick);
             }
         }
     }
