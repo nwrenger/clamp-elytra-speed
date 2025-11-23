@@ -10,15 +10,15 @@ A lightweight mod that **limits the maximum speed of elytra flight** to a config
 
 ## How It Works
 
-Minecraft calculates elytra movement client-side, so the server cannot directly control flight velocity.
+Minecraft calculates elytra movement on the client, so the server can’t change the calculation itself but can still cap the resulting velocity.
 
 To enforce a maximum speed:
 
 - **Server side**:
-  Enforces the speed limit and caps the speed of players who exceed it.
+  Applies the speed limit and clamps the velocity of players who exceed it.
 - **Client side (optional but recommended)**:
-  Applies the same speed logic locally for smooth behavior.
-  Without the client mod, players flying too fast will experience rubberbanding.
+  Adjusts the local speed-calculation logic based on the server's configured maximum for smoother behavior.
+  Without the client mod, players who fly too fast may experience rubberbanding.
 
 **Server owners should encourage players to install the mod** for the best experience.
 
