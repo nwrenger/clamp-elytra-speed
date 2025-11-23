@@ -8,35 +8,18 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 
 import io.github.nwrenger.elytraspeedcap.ElytraSpeedCap;
 import io.github.nwrenger.elytraspeedcap.ElytraSpeedCapClient;
-import io.github.nwrenger.elytraspeedcap.ElytraSpeedCapConfig;
 
 @Mixin(FireworkRocketEntity.class)
 public abstract class FireworkRocketEntityMixin {
 
     @ModifyArg(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;setDeltaMovement(Lnet/minecraft/world/phys/Vec3;)V"), index = 0)
     private Vec3 elytraSpeedCap$modifyRocketBoost(Vec3 vanillaBoost) {
-        double maxSpeedPerTick = ElytraSpeedCapConfig.intoMaxSpeedPerTick(ElytraSpeedCapClient.maxSpeed);
-        if (maxSpeedPerTick <= 0.0D) {
+        // Cap the velocity vector, returning early if no cap is needed
+        Vec3 capped = ElytraSpeedCap.capElytraVelocity(ElytraSpeedCapClient.maxSpeed, vanillaBoost);
+        if (capped == null)
             return vanillaBoost;
-        }
 
-        double horizontal = Math.sqrt(vanillaBoost.x * vanillaBoost.x + vanillaBoost.z * vanillaBoost.z);
-        if (horizontal <= maxSpeedPerTick) {
-            return vanillaBoost;
-        }
-
-        double factor = maxSpeedPerTick / horizontal;
-        Vec3 capped = vanillaBoost.scale(factor);
-
-        ElytraSpeedCap.LOGGER.debug(
-                "[Elytra Speed Cap] Capping FIREWORK Elytra boost from {} to {} (factor={}) oldBoost={} newBoost={}",
-                horizontal,
-                maxSpeedPerTick,
-                factor,
-                vanillaBoost,
-                capped);
-
-        vanillaBoost = capped;
-        return vanillaBoost;
+        // Return the capped velocity vector
+        return capped;
     }
 }

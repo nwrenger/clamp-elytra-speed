@@ -12,36 +12,23 @@ public final class ElytraSpeedHandler {
     }
 
     private static void onEndWorldTick(ServerLevel level) {
-        double maxSpeedPerTick = ElytraSpeedCapConfig.intoMaxSpeedPerTick(
-                ElytraSpeedCap.getConfig().max_speed);
-        if (maxSpeedPerTick <= 0.0D)
-            return;
+        double maxSpeed = ElytraSpeedCap.getConfig().max_speed;
 
         for (ServerPlayer player : level.players()) {
             if (!player.isFallFlying())
                 continue;
 
+            // Cap the player's velocity
             Vec3 velocity = player.getDeltaMovement();
+            Vec3 capped = ElytraSpeedCap.capElytraVelocity(maxSpeed, velocity);
 
-            // Horizontal speed from velocity, not from position delta
-            double horizontal = Math.sqrt(velocity.x * velocity.x + velocity.z * velocity.z);
-
-            if (horizontal > maxSpeedPerTick) {
-                double factor = maxSpeedPerTick / horizontal;
-
-                // Apply cap
-                Vec3 capped = velocity.scale(factor);
+            // Check if velocity was capped
+            if (capped != null) {
                 player.setDeltaMovement(capped);
 
                 // Tell the client "your motion changed", so it updates cleanly
                 player.hasImpulse = true;
                 player.hurtMarked = true;
-
-                ElytraSpeedCap.LOGGER.debug(
-                        "[Elytra Speed Cap] Soft-capped Elytra velocity for {}: horizontal={} max={}",
-                        player.getGameProfile().name(),
-                        horizontal,
-                        maxSpeedPerTick);
             }
         }
     }
