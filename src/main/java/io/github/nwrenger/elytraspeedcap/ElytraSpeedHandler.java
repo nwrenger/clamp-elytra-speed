@@ -1,4 +1,4 @@
-package io.github.nwrenger.clampelytraspeed;
+package io.github.nwrenger.elytraspeedcap;
 
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.server.level.ServerLevel;
@@ -9,23 +9,24 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public final class ElytraClampHandler {
+public final class ElytraSpeedHandler {
     // Last server-side position per player
     private static final Map<UUID, Vec3> LAST_POS = new HashMap<>();
 
     // How far over the cap we allow before correcting (1.05 = 5% over)
     private static final double SOFT_CAP_FACTOR = 1.05;
 
-    // How strongly we pull toward the clamped position each tick (0..1)
+    // How strongly we pull toward the capped position each tick (0..1)
     private static final double BLEND_FACTOR = 0.4;
 
     public static void init() {
-        ServerTickEvents.END_WORLD_TICK.register(ElytraClampHandler::onEndWorldTick);
+        ServerTickEvents.END_WORLD_TICK.register(ElytraSpeedHandler::onEndWorldTick);
     }
 
     private static void onEndWorldTick(ServerLevel level) {
-        double maxSpeedPerTick = ClampElytraSpeedConfig.intoMaxSpeedPerTick(ClampElytraSpeed.getConfig().max_speed);
-        if (maxSpeedPerTick <= 0.0D) return;
+        double maxSpeedPerTick = ElytraSpeedCapConfig.intoMaxSpeedPerTick(ElytraSpeedCap.getConfig().max_speed);
+        if (maxSpeedPerTick <= 0.0D)
+            return;
 
         double softCap = maxSpeedPerTick * SOFT_CAP_FACTOR;
 
@@ -51,13 +52,12 @@ public final class ElytraClampHandler {
                     // Target: what the displacement *would* be at exactly maxSpeedPerTick
                     double factorToMax = maxSpeedPerTick / horizontal;
 
-                    Vec3 clampedDelta = new Vec3(
+                    Vec3 cappedDelta = new Vec3(
                             delta.x * factorToMax,
                             delta.y,
-                            delta.z * factorToMax
-                    );
+                            delta.z * factorToMax);
 
-                    Vec3 targetPos = previous.add(clampedDelta);
+                    Vec3 targetPos = previous.add(cappedDelta);
 
                     // Blend current position towards target position
                     // blended = current + (target - current) * BLEND_FACTOR
@@ -66,14 +66,13 @@ public final class ElytraClampHandler {
 
                     player.teleportTo(blended.x, blended.y, blended.z);
 
-                    ClampElytraSpeed.LOGGER.debug(
-                            "[Clamp Elytra Speed] Soft-clamped Elytra move for {}: horizontal={} softCap={} max={} blend={}",
+                    ElytraSpeedCap.LOGGER.debug(
+                            "[Elytra Speed Cap] Soft-capped Elytra move for {}: horizontal={} softCap={} max={} blend={}",
                             player.getGameProfile().name(),
                             horizontal,
                             softCap,
                             maxSpeedPerTick,
-                            BLEND_FACTOR
-                    );
+                            BLEND_FACTOR);
 
                     current = blended;
                 }

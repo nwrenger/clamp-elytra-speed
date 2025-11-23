@@ -22,11 +22,11 @@ loom {
 	splitEnvironmentSourceSets()
 
 	mods {
-		"clamp-elytra-speed" {
+		"elytra-speed-cap" {
 			sourceSet sourceSets.main
 		}
 	}
-	
+
 	runs {
         client {
             vmArgs "-Dmixin.debug.export=true"

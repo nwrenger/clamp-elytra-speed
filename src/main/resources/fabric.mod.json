@@ -1,25 +1,25 @@
 {
 	"schemaVersion": 1,
-	"id": "clamp-elytra-speed",
+	"id": "elytra-speed-cap",
 	"version": "${version}",
-	"name": "Clamp Elytra Speed",
-	"description": "Clamp/Limit the maximum speed of elytra flight to a configurable value.",
+	"name": "Elytra Speed Cap",
+	"description": "Limit the maximum speed of elytra flight to a configurable value.",
 	"authors": ["nwrenger"],
 	"contact": {
-		"sources": "https://github.com/nwrenger/clamp-elytra-speed",
-		"issues": "https://github.com/nwrenger/clamp-elytra-speed/issues"
+		"sources": "https://github.com/nwrenger/elytra-speed-cap",
+		"issues": "https://github.com/nwrenger/elytra-speed-cap/issues"
 	},
 	"license": "MIT",
-	"icon": "assets/clamp-elytra-speed/icon.png",
+	"icon": "assets/elytra-speed-cap/icon.png",
 	"environment": "*",
 	"entrypoints": {
-		"main": ["io.github.nwrenger.clampelytraspeed.ClampElytraSpeed"],
-		"client": ["io.github.nwrenger.clampelytraspeed.ClampElytraSpeedClient"]
+		"main": ["io.github.nwrenger.elytraspeedcap.ElytraSpeedCap"],
+		"client": ["io.github.nwrenger.elytraspeedcap.ElytraSpeedCapClient"]
 	},
 	"mixins": [
-		"clamp-elytra-speed.mixins.json",
+		"elytra-speed-cap.mixins.json",
 		{
-			"config": "clamp-elytra-speed.client.mixins.json",
+			"config": "elytra-speed-cap.client.mixins.json",
 			"environment": "client"
 		}
 	],
