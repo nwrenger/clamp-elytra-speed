@@ -15,7 +15,7 @@ Minecraft calculates elytra movement on the client, so the server can’t change
 To enforce a maximum speed:
 
 - **Server side**:
-  Applies the speed limit and clamps the velocity of players who exceed it.
+  Applies the speed limit and caps the velocity of players who exceed it.
 - **Client side (optional but recommended)**:
   Adjusts the local speed-calculation logic based on the server's configured maximum for smoother behavior.
   Without the client mod, players who fly too fast may experience rubberbanding.
