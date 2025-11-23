@@ -26,15 +26,6 @@ loom {
 			sourceSet sourceSets.main
 		}
 	}
-
-	runs {
-        client {
-            vmArgs "-Dmixin.debug.export=true"
-        }
-        server {
-            vmArgs "-Dmixin.debug.export=true"
-        }
-    }
 }
 
 dependencies {
